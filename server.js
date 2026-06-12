@@ -9,7 +9,7 @@ dotenv.config();
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 const app = express();
-const PORT = process.env.PORT || 3001;
+const PORT = process.env.PORT || 3000;
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -51,12 +51,13 @@ app.post('/api/create-checkout-session', async (req, res) => {
       quantity: item.quantity || 1,
     }));
 
+    const baseUrl = `${req.protocol}://${req.get('host')}`;
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ['card'],
       line_items: lineItems,
       mode: 'payment',
-      success_url: `http://localhost:5173/success?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `http://localhost:5173/cancel`,
+      success_url: `${baseUrl}/success?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${baseUrl}/cancel`,
       shipping_address_collection: {
         allowed_countries: ['US', 'CA'],
       },
@@ -77,6 +78,8 @@ app.post('/api/create-subscription', async (req, res) => {
   try {
     const { priceId, planName, amount } = req.body;
 
+    const baseUrl = `${req.protocol}://${req.get('host')}`;
+
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ['card'],
       line_items: [
@@ -96,8 +99,8 @@ app.post('/api/create-subscription', async (req, res) => {
         },
       ],
       mode: 'subscription',
-      success_url: `http://localhost:5173/success?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `http://localhost:5173/cancel`,
+      success_url: `${baseUrl}/success?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${baseUrl}/cancel`,
       shipping_address_collection: {
         allowed_countries: ['US', 'CA'],
       },
