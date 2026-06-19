@@ -4,6 +4,7 @@ import Header from './components/Header';
 import Hero from './components/Hero';
 import CardGallery from './components/CardGallery';
 import SubscriptionSection from './components/SubscriptionSection';
+import NewsletterSignup from './components/NewsletterSignup';
 import Footer from './components/Footer';
 import CartDrawer from './components/CartDrawer';
 import SuccessPage from './pages/SuccessPage';
@@ -46,6 +47,7 @@ function App() {
           <Hero />
           <CardGallery />
           <SubscriptionSection />
+          <NewsletterSignup />
         </main>
         <Footer />
         <CartDrawer />

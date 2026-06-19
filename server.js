@@ -4,6 +4,7 @@ import Stripe from 'stripe';
 import dotenv from 'dotenv';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import { execSync } from 'child_process';
 
 dotenv.config();
 
@@ -121,6 +122,48 @@ app.get('/api/config', (req, res) => {
   res.json({
     publishableKey: process.env.VITE_STRIPE_PUBLISHABLE_KEY,
   });
+});
+
+/**
+ * POST /api/subscribe
+ * Subscribes a user to the newsletter via team-db
+ */
+app.post('/api/subscribe', async (req, res) => {
+  try {
+    const { name, email } = req.body;
+
+    if (!name || !email) {
+      return res.status(400).json({ error: 'Name and email are required.' });
+    }
+
+    // Basic email validation
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      return res.status(400).json({ error: 'Please provide a valid email address.' });
+    }
+
+    // Insert into team-db
+    const escapedName = name.replace(/'/g, "''");
+    const escapedEmail = email.replace(/'/g, "''");
+    const result = execSync(
+      `team-db "INSERT INTO subscribers (name, email) VALUES ('${escapedName}', '${escapedEmail}')"`,
+      { encoding: 'utf8', timeout: 10000 }
+    ).trim();
+
+    res.json({
+      success: true,
+      message: 'Welcome to the club!',
+      discount_code: 'LAUNCH10',
+    });
+  } catch (error) {
+    console.error('[Subscribe Error]', error.message);
+
+    // Check for duplicate email
+    if (error.message.includes('UNIQUE constraint')) {
+      return res.status(409).json({ error: 'This email is already subscribed!' });
+    }
+
+    res.status(500).json({ error: 'Could not complete signup. Please try again.' });
+  }
 });
 
 // Fallback to index.html for SPA routing
