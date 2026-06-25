@@ -5,6 +5,7 @@ import Hero from './components/Hero';
 import CardGallery from './components/CardGallery';
 import SubscriptionSection from './components/SubscriptionSection';
 import NewsletterSignup from './components/NewsletterSignup';
+import FreeShippingBanner from './components/FreeShippingBanner';
 import Footer from './components/Footer';
 import CartDrawer from './components/CartDrawer';
 import SuccessPage from './pages/SuccessPage';
@@ -42,6 +43,7 @@ function App() {
   return (
     <CartProvider>
       <div className="app">
+        <FreeShippingBanner />
         <Header />
         <main>
           <Hero />

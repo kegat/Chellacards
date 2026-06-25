@@ -1,0 +1,74 @@
+/* ============================================
+   FREE SHIPPING BANNER
+   ============================================ */
+.shipping-banner {
+  background-color: #5B7B5A;
+  color: #FFFFFF;
+  padding: 0.5rem 1rem;
+  text-align: center;
+  font-size: 0.85rem;
+  font-weight: 600;
+  transition: background-color 0.3s;
+}
+
+.shipping-banner--eligible {
+  background-color: #D4A857;
+}
+
+.shipping-banner__container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.shipping-banner__icon {
+  font-size: 1.1rem;
+}
+
+.shipping-banner__text {
+  font-family: 'Nunito Sans', sans-serif;
+}
+
+/* --- Cart Shipping Progress --- */
+.cart-drawer__shipping {
+  padding: 0.75rem 0;
+  border-bottom: 1px solid #f0ebe5;
+  margin-bottom: 0.75rem;
+}
+
+.shipping-progress {
+  text-align: center;
+}
+
+.shipping-progress--free {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #5B7B5A;
+  padding: 0.5rem 0;
+}
+
+.shipping-progress__bar {
+  height: 6px;
+  background-color: #f0ebe5;
+  border-radius: 3px;
+  overflow: hidden;
+  margin-bottom: 0.5rem;
+}
+
+.shipping-progress__fill {
+  height: 100%;
+  background: linear-gradient(90deg, #E87A6B, #D4A857);
+  border-radius: 3px;
+  transition: width 0.3s ease;
+}
+
+.shipping-progress__text {
+  font-size: 0.8rem;
+  color: #7a7a7a;
+  margin: 0;
+}
+
+.shipping-progress__text strong {
+  color: #5B7B5A;
+}

@@ -123,6 +123,27 @@ function CartDrawer() {
 
             {/* Summary */}
             <div className="cart-drawer__summary">
+              {/* Free shipping progress */}
+              <div className="cart-drawer__shipping">
+                {(() => {
+                  const threshold = 2500;
+                  const remaining = threshold - subtotal;
+                  if (subtotal >= threshold) {
+                    return <div className="shipping-progress shipping-progress--free">🎉 You've unlocked FREE shipping!</div>;
+                  }
+                  const pct = Math.min((subtotal / threshold) * 100, 99);
+                  return (
+                    <div className="shipping-progress">
+                      <div className="shipping-progress__bar">
+                        <div className="shipping-progress__fill" style={{ width: `${pct}%` }} />
+                      </div>
+                      <p className="shipping-progress__text">
+                        You're ${(remaining / 100).toFixed(2)} away from <strong>free shipping!</strong>
+                      </p>
+                    </div>
+                  );
+                })()}
+              </div>
               {savings > 0 && (
                 <div className="cart-drawer__savings-row">
                   <span>You Save</span>

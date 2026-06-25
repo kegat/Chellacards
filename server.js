@@ -53,6 +53,9 @@ app.post('/api/create-checkout-session', async (req, res) => {
     }));
 
     const baseUrl = `${req.protocol}://${req.get('host')}`;
+    const total = lineItems.reduce((sum, item) => sum + item.price_data.unit_amount * item.quantity, 0);
+    const FREE_THRESHOLD = 2500; // $25.00
+
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ['card'],
       line_items: lineItems,
@@ -62,6 +65,19 @@ app.post('/api/create-checkout-session', async (req, res) => {
       shipping_address_collection: {
         allowed_countries: ['US', 'CA'],
       },
+      shipping_options: [
+        {
+          shipping_rate_data: {
+            type: 'fixed_amount',
+            fixed_amount: { amount: total >= FREE_THRESHOLD ? 0 : 499, currency: 'usd' },
+            display_name: total >= FREE_THRESHOLD ? 'Free Shipping' : 'Standard Shipping',
+            delivery_estimate: {
+              minimum: { unit: 'business_day', value: 5 },
+              maximum: { unit: 'business_day', value: 8 },
+            },
+          },
+        },
+      ],
     });
 
     res.json({ url: session.url });
