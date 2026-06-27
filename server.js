@@ -39,20 +39,21 @@ app.post('/api/create-checkout-session', async (req, res) => {
       return res.status(400).json({ error: 'No items provided' });
     }
 
+    const baseUrl = `${req.protocol}://${req.get('host')}`;
+
     // Build line items for Stripe
     const lineItems = items.map((item) => ({
       price_data: {
         currency: 'usd',
         product_data: {
           name: item.name,
-          images: item.image ? [`http://localhost:5173${item.image}`] : [],
+          images: item.image ? [`${baseUrl}${item.image}`] : [],
         },
         unit_amount: item.price, // Already in cents
       },
       quantity: item.quantity || 1,
     }));
 
-    const baseUrl = `${req.protocol}://${req.get('host')}`;
     const total = lineItems.reduce((sum, item) => sum + item.price_data.unit_amount * item.quantity, 0);
     const FREE_THRESHOLD = 2500; // $25.00
 
@@ -182,9 +183,29 @@ app.post('/api/subscribe', async (req, res) => {
   }
 });
 
-// Fallback to index.html for SPA routing
+// API 404 handler — return JSON for unknown API routes
+app.use((req, res, next) => {
+  if (req.path.startsWith('/api/')) {
+    return res.status(404).json({ error: 'API endpoint not found' });
+  }
+  next();
+});
+
+// Global error handler — ensures API routes always return JSON, not HTML
+app.use((err, req, res, next) => {
+  console.error('[Server Error]', err);
+  if (req.path.startsWith('/api/')) {
+    return res.status(500).json({ error: 'Internal server error. Please try again.' });
+  }
+  next(err);
+});
+
+// Fallback to index.html for SPA routing (non-API routes only)
 app.use((req, res) => {
-  res.sendFile(path.join(__dirname, 'dist', 'index.html'));
+  if (req.method === 'GET' && !req.path.startsWith('/api/')) {
+    return res.sendFile(path.join(__dirname, 'dist', 'index.html'));
+  }
+  res.status(404).json({ error: 'Not found' });
 });
 
 app.listen(PORT, '0.0.0.0', () => {
