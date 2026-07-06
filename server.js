@@ -40,6 +40,7 @@ app.post('/api/create-checkout-session', async (req, res) => {
     }
 
     const baseUrl = `${req.protocol}://${req.get('host')}`;
+    const originUrl = req.get('origin') || baseUrl;
 
     // Build line items for Stripe
     const lineItems = items.map((item) => ({
@@ -61,8 +62,8 @@ app.post('/api/create-checkout-session', async (req, res) => {
       payment_method_types: ['card'],
       line_items: lineItems,
       mode: 'payment',
-      success_url: `${baseUrl}/success?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${baseUrl}/cancel`,
+      success_url: `${originUrl}/success?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${originUrl}/cancel`,
       shipping_address_collection: {
         allowed_countries: ['US', 'CA'],
       },
@@ -97,6 +98,7 @@ app.post('/api/create-subscription', async (req, res) => {
     const { priceId, planName, amount } = req.body;
 
     const baseUrl = `${req.protocol}://${req.get('host')}`;
+    const originUrl = req.get('origin') || baseUrl;
 
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ['card'],
@@ -117,8 +119,8 @@ app.post('/api/create-subscription', async (req, res) => {
         },
       ],
       mode: 'subscription',
-      success_url: `${baseUrl}/success?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${baseUrl}/cancel`,
+      success_url: `${originUrl}/success?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${originUrl}/cancel`,
       shipping_address_collection: {
         allowed_countries: ['US', 'CA'],
       },
