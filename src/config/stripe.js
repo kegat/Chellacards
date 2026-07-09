@@ -51,11 +51,9 @@ export const PRODUCTS = {
   monthlyPremium:  { id: 'sub-premium',  name: 'Monthly Premium',    price: 3500, priceId: 'price_CHELLA_SUB_PREMIUM' },
 };
 
-const API_URL = import.meta.env.VITE_API_URL || '';
-
 export const createCheckoutSession = async (items) => {
   try {
-    const response = await fetch(`${API_URL}/api/create-checkout-session`, {
+    const response = await fetch('/api/create-checkout-session', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ items }),
@@ -79,7 +77,7 @@ export const createCheckoutSession = async (items) => {
  */
 export const createSubscriptionSession = async (planName, amount) => {
   try {
-    const response = await fetch(`${API_URL}/api/create-subscription`, {
+    const response = await fetch('/api/create-subscription', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ planName, amount }),
